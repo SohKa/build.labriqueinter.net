@@ -28,6 +28,10 @@ set -o pipefail
 ### HELPERS ###
 ###############
 
+function urlencode() {
+  php -r "echo urlencode('${1/\'/\\\'}');"
+}
+
 function log() {
   echo "$(date +'%F %R'): ${1}" | tee -a "$log_filepath/$log_mainfile"
 }
@@ -84,10 +88,6 @@ function exit_error() {
   cleaning
 }
 
-function urlencode() {
-  php -r "echo urlencode('${1/\'/\\\'}');"
-}
-
 
 #################
 ### FUNCTIONS ###
@@ -137,11 +137,11 @@ function cleaning() {
       done
     fi
 
-    info "4 hours (without reboot) before disabling this interface"
+    info "24 hours (without reboot) before disabling this interface"
     info "Please, save this page with Ctrl+S"
 
     sync
-    sleep 4h
+    sleep 24h
   
     info "Time's up!"
     warn "This page will be disconnected"
@@ -171,7 +171,7 @@ function set_logpermissions() {
 
 function start_logwebserver() {
   pushd "${log_filepath}" &> /dev/null
-  python -m SimpleHTTPServer 2468 &> /dev/null &
+  hypercube-webserver.py 2468 &> /dev/null &
   popd &> /dev/null
 
   webserver_pid=$(
@@ -285,7 +285,7 @@ function detect_wifidevice() {
 }
 
 function deb_changepassword() {
-  echo "root:${settings[unix,root_password]}" | /usr/sbin/chpasswd
+  echo "root:${settings[unix,root_password]}" | chpasswd
 }
 
 function deb_upgrade() {
@@ -649,6 +649,7 @@ fi
 
 # Second boot
 if [ -f "${log_filepath}/enabled" ]; then
+
   info "Starting second step"
   end_installation
 
@@ -667,17 +668,14 @@ else
   info "Extracting settings for Unix"
   extract_settings unix
 
-  info "Extracting settings for YunoHost"
-  extract_settings yunohost
-  
   info "Extracting settings for Wifi Hotspot"
   extract_settings hotspot
 
-  info "Extracting settings for VPN Client (logging)"
+  info "Extracting settings for VPN Client"
   extract_settings vpnclient
-  
-  info "Extracting .cube file for VPN Client"
-  extract_dotcube
+
+  info "Extracting settings for YunoHost"
+  extract_settings yunohost
 
   info "Updating Debian root password"
   deb_changepassword
@@ -705,7 +703,7 @@ else
     fi
   fi
 
-  # From this line, meeting an error means reflashing the sdcard before retrying
+  # From this line, having an error means reflashing the sdcard before retrying
   touch "${log_filepath}/enabled"
 
   info "Doing YunoHost post-installation..."
@@ -722,11 +720,22 @@ else
   info "Creating first user"
   ynh_createuser
 
-  info "Installing VPN Client..."
-  install_vpnclient
+  if [ "${settings[vpnclient,skip]}" != yes ]; then
+    info "Extracting .cube file for VPN Client"
+    extract_dotcube
   
-  info "Installing Wifi Hotspot..."
-  install_hotspot
+    info "Installing VPN Client..."
+    install_vpnclient
+  else
+    warn "VPN Client installation skipped"
+  fi
+ 
+  if [ "${settings[hotspot,skip]}" != yes ]; then
+    info "Installing Wifi Hotspot..."
+    install_hotspot
+  else
+    warn "Wifi Hotspot installation skipped"
+  fi
 
   info "Installing DoctorCube..."
   install_doctorcube
@@ -734,11 +743,15 @@ else
   info "Installing Roundcube Webmail..."
   install_webmail || true
 
-  info "Configuring VPN Client..."
-  configure_vpnclient
+  if [ "${settings[vpnclient,skip]}" != yes ]; then
+    info "Configuring VPN Client..."
+    configure_vpnclient
+  fi
   
-  info "Configuring Wifi Hotspot..."
-  configure_hotspot
+  if [ "${settings[hotspot,skip]}" != yes ]; then
+    info "Configuring Wifi Hotspot..."
+    configure_hotspot
+  fi
  
   info "Rebooting..."
 
