@@ -11,7 +11,6 @@ cat <<EOF
 
 # OPTIONS
 
-  -b		olinux board (see config_board.sh) 	(default: a20lime)
   -d		debootstrap directory, .img or tarball	(default: ./tmp/debootstrap)
   -D		device name (img, /dev/sdc, /dev/mmc)	(mandatory)
   -s		size of img in MB		 	(mandatory only for img device option)
@@ -25,11 +24,9 @@ exit 1
 TARGET=./tmp/olinux.img
 MNT1=./tmp/dest
 MNT2=./tmp/source
-DEB_DIR=./tmp/debootstrap
-BOARD="a20lime"
 REP=$(dirname $0)
 
-while getopts ":s:d:t:b:D:e" opt; do
+while getopts ":s:t:b:D:e" opt; do
   case $opt in
     D)
       DEVICE=$OPTARG
@@ -40,14 +37,8 @@ while getopts ":s:d:t:b:D:e" opt; do
     t)
       TARGET=$OPTARG
       ;;
-    d)
-      DEB_DIR=$OPTARG
-      ;;
-    b)
-      BOARD=$OPTARG
-      ;;
     e)
-      ENCRYPT=yes
+      ENCRYPTED=yes
       ;;
     \?)
       show_usage
@@ -59,8 +50,8 @@ done
 ### CHECKING ARGS ###
 #####################
 
-if [ ! -r "${DEB_DIR}" ]; then
-  echo "[ERR] Cannot read ${DEB_DIR}" >&2
+if [ ! -r "${DEBOOTSTRAP_DIR}" ]; then
+  echo "[ERR] Cannot read ${DEBOOTSTRAP_DIR}" >&2
   exit 1
 fi
 
@@ -79,6 +70,27 @@ fi
 #####################
 
 bins=(dd parted mkfs.ext4 zerofree losetup tune2fs)
+
+function exit_error() {
+  local msg=${1}
+  local usage=${2}
+
+  if [ ! -z "${msg}" ]; then
+    echo -e "\e[31m\e[1m[ERR] $1\e[0m" >&2
+  fi
+
+  if [ "${usage}" == usage ]; then
+    if [ -z "${msg}" ]; then
+      echo -e "\n       \e[7m\e[1m LaBriqueInternet SD Card Installer \e[0m\n"
+    else
+      echo
+    fi
+
+    show_usage
+  fi
+
+  exit 1
+}
 
 for i in "${bins[@]}"; do
   if ! which "${i}" &> /dev/null; then
@@ -120,7 +132,7 @@ else
   TYPE="block"
 fi
 
-if [ -z $ENCRYPT ] ; then
+if [ -z $ENCRYPTED ] ; then
   # create one partition starting at 2048 which is default
   echo "[INFO] Partitioning"
   parted --script $DEVICE mklabel msdos
@@ -158,7 +170,7 @@ tune2fs -o journal_data_writeback $DEVICEP1 >/dev/null 2>&1
 
 finish() {
   echo "[INFO] Umount"
-  if [ -z $ENCRYPT ] ; then
+  if [ -z $ENCRYPTED ] ; then
     if mountpoint -q $MNT1 ; then
       umount $MNT1
     fi
@@ -178,7 +190,7 @@ finish() {
 }
 trap finish EXIT
 
-if [ -z $ENCRYPT ] ; then
+if [ -z $ENCRYPTED ] ; then
   echo "[INFO] Mount filesystem"
   mount -t ext4 $DEVICEP1 $MNT1
 else
@@ -200,15 +212,14 @@ else
 fi  
 
 echo "[INFO] Copy bootstrap files"
-cp -ar ${DEB_DIR}/* $MNT1/
+cp -ar ${DEBOOTSTRAP_DIR}/* $MNT1/
 sync
 
 echo "[INFO] Write sunxi-with-spl"
-. ${REP}/config_board.sh
 dd if=$MNT1/usr/lib/u-boot/${U_BOOT}/u-boot-sunxi-with-spl.bin of=${DEVICE} bs=1024 seek=8 >/dev/null 2>&1
 sync
 
-if [ -z $ENCRYPT ] ; then
+if [ -z $ENCRYPTED ] ; then
     umount $MNT1
 else
     umount $MNT1/boot
@@ -219,7 +230,7 @@ fi
 if [ "${TYPE}" = "loop" ] ; then
   echo "[INFO] zerofree"
   zerofree $DEVICEP1  
-  if [ $ENCRYPT ] ; then
+  if [ $ENCRYPTED ] ; then
     zerofree $DEVICEP2 
   fi 
   losetup -d $DEVICE
@@ -227,9 +238,3 @@ elif [ "${TYPE}" = "nbd" ] ; then
   kpartx -d $DEVICE
   qemu-nbd -d $DEVICE 
 fi
-
-finish() {
-  exit 0
-}
-
-exit 0

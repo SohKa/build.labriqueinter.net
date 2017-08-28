@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Debootstrap
+if [ ${CROSS} ] ; then
+  if ! mount | grep -q binfmt_misc ; then
+    mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+    bash ${REP}/contrib/binfmt-misc-arm.sh unregister
+    bash ${REP}/contrib/binfmt-misc-arm.sh
+  fi
+  if [ ${APTCACHER} ] ; then
+    debootstrap --arch=armhf --foreign $DEBIAN_RELEASE $DEBOOTSTRAP_DIR http://${APTCACHER}:3142/ftp.fr.debian.org/debian/
+  else
+    debootstrap --arch=armhf --foreign $DEBIAN_RELEASE $DEBOOTSTRAP_DIR
+  fi
+  cp /usr/bin/qemu-arm-static $DEBOOTSTRAP_DIR/usr/bin/
+  cp /etc/resolv.conf $DEBOOTSTRAP_DIR/etc
+  chroot_deb $DEBOOTSTRAP_DIR '/debootstrap/debootstrap --second-stage'
+elif [ ${APTCACHER} ] ; then
+ debootstrap $DEBIAN_RELEASE $DEBOOTSTRAP_DIR http://${APTCACHER}:3142/ftp.fr.debian.org/debian/
+else
+ debootstrap $DEBIAN_RELEASE $DEBOOTSTRAP_DIR
+fi
+
+echo '/dev/mmcblk0p1 / ext4 rw,relatime 0 0' > $DEBOOTSTRAP_DIR/etc/mtab
+
+

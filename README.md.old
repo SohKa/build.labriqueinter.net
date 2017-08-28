@@ -30,10 +30,10 @@ instane.
 ### Retrieve scripts
 
 ```shell
-docker build -t debian:olinux -f build/Dockerfile .
-mkdir -p tmp/apt-cache
-docker run -d --name apt -v $(pwd)/tmp/:/tmp/ debian:olinux /usr/sbin/apt-cacher-ng ForeGround=1 CacheDir=/tmp/apt-cache
-docker run --privileged -i -t --name build --link apt:apt -v $(pwd)/build/:/olinux/ -v $(pwd)/tmp/:/tmp/ debian:olinux bash /olinux/create_arm_debootstrap.sh -c -p apt
+docker build -t debian:olinux -f Dockerfile .
+mkdir -p build/apt-cacher
+docker run -d --name apt -v $(pwd)/build/apt-cacher/:/srv/build/apt-cacher/ debian:olinux /usr/sbin/apt-cacher-ng ForeGround=1 CacheDir=/srv/build/apt-cacher
+docker run --privileged -i -t -h build.labriqueinter.net --link apt:apt -v $(pwd)/:/srv/ debian:olinux bash /srv/build.sh -c -p apt
 docker stop apt
 docker rm build
 docker rm apt
