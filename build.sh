@@ -167,7 +167,7 @@ if [ $BOARDS != 'none' ]; then
 
   # Create img
   for i in "${BOARD_LIST[@]}"; do
-    . ${i}config.sh
+    . ${i}/config.sh
     DEBOOTSTRAP_DIR=${BASE_DEBOOTSTRAP_DIR}-${NAME}
     . $DIR/conf/images/main.sh
     if [ $ENCRYPT ]; then
