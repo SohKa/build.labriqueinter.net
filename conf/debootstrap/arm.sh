@@ -9,4 +9,5 @@ if [ ${CROSS} ] ; then
   fi
   cp /usr/bin/qemu-arm-static $DEBOOTSTRAP_DIR/usr/bin/
 fi
+mv $DEBOOTSTRAP_DIR/etc/resolv.conf $DEBOOTSTRAP_DIR/etc/resolv.conf.old
 cp /etc/resolv.conf $DEBOOTSTRAP_DIR/etc
