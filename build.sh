@@ -132,9 +132,9 @@ fi
 BASE_DEBOOTSTRAP_DIR=${DEBOOTSTRAP_DIR}
 
 if [ ${BOARDS} == "all" ]; then
-  BOARD_LIST=($(ls -d $DIR/conf/boards/*/))
+  BOARD_LIST=($(ls -d $DIR/conf/boards/*))
 else
-  BOARD_LIST=(${BOARDS//,/ })
+  BOARD_LIST=($DIR/conf/boards/${BOARDS//,/ $DIR/conf/boards/})
 fi
 
 . $DIR/conf/boards/main.sh
@@ -150,7 +150,7 @@ if [ $BOARDS != 'none' ]; then
     rm -rf ${BASE_DEBOOTSTRAP_DIR}-${NAME}
     cp -ra $BASE_DEBOOTSTRAP_DIR ${BASE_DEBOOTSTRAP_DIR}-${NAME}
     DEBOOTSTRAP_DIR=${BASE_DEBOOTSTRAP_DIR}-${NAME}
-    . ${i}main.sh
+    . ${i}/main.sh
     if [ $ENCRYPT ]; then
       rm -rf ${BASE_DEBOOTSTRAP_DIR}-${NAME}-encrypted
       cp -ra ${BASE_DEBOOTSTRAP_DIR}-${NAME} ${BASE_DEBOOTSTRAP_DIR}-${NAME}-encrypted
@@ -161,7 +161,7 @@ if [ $BOARDS != 'none' ]; then
 
   # Clean debootstrap directories
   for i in $BUILD_DIR/debootstrap*/ ; do
-    DEBOOTSTRAP_DIR=$i
+    DEBOOTSTRAP_DIR=$i/
     . $DIR/conf/debootstrap/clean.sh
   done 
 
