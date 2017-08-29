@@ -1,4 +1,4 @@
-FROM debian:armhf
+FROM debian:stable
 MAINTAINER Émile Morel
 
 COPY init.sh /tmp/init.sh
