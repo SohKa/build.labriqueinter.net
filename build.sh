@@ -134,8 +134,7 @@ BASE_DEBOOTSTRAP_DIR=${DEBOOTSTRAP_DIR}
 if [ ${BOARDS} == "all" ]; then
   BOARD_LIST=($(ls -d $DIR/conf/boards/*/))
 else
-  IFS=','
-  BOARD_LIST=($BOARDS)
+  BOARD_LIST=(${BOARDS//,/ })
 fi
 
 . $DIR/conf/boards/main.sh
