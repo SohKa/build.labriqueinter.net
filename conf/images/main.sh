@@ -1,8 +1,8 @@
 #!/bin/bash
 
-TARGET=$DIR_BUILD/labriqueinternet_${NAME}_"$(date '+%Y-%m-%d')"_${DEBIAN_RELEASE}${INSTALL_YUNOHOST_TESTING}${ENCRYPTED}.img
-MNT1=$DIR_BUILD/dest
-MNT2=$DIR_BUILD/source
+TARGET=$BUILD_DIR/labriqueinternet_${NAME^^}${ENCRYPTED}_$(date '+%Y-%m-%d')_${DEBIAN_RELEASE}${INSTALL_YUNOHOST_TESTING}.img
+MNT1=$BUILD_DIR/dest
+MNT2=$BUILD_DIR/source
 IMGSIZE=1500
 DEVICE=img
 

@@ -111,7 +111,7 @@ trap finish EXIT
 mkdir -p $DIR $BUILD_DIR
 
 if [ "${INSTALL_YUNOHOST_DIST}" != stable ]; then
-  INSTALL_YUNOHOST_TESTING="-testing"
+  INSTALL_YUNOHOST_TESTING="-${INSTALL_YUNOHOST_DIST}"
 fi
 
 # deboostrap
@@ -152,9 +152,9 @@ if [ $BOARDS != 'none' ]; then
     DEBOOTSTRAP_DIR=${BASE_DEBOOTSTRAP_DIR}-${NAME}
     . ${i}/main.sh
     if [ $ENCRYPT ]; then
-      rm -rf ${BASE_DEBOOTSTRAP_DIR}-${NAME}-encrypted
-      cp -ra ${BASE_DEBOOTSTRAP_DIR}-${NAME} ${BASE_DEBOOTSTRAP_DIR}-${NAME}-encrypted
-      DEBOOTSTRAP_DIR=${BASE_DEBOOTSTRAP_DIR}-${NAME}-encrypted
+      rm -rf ${BASE_DEBOOTSTRAP_DIR}-${NAME}-encryptedfs
+      cp -ra ${BASE_DEBOOTSTRAP_DIR}-${NAME} ${BASE_DEBOOTSTRAP_DIR}-${NAME}-encryptedfs
+      DEBOOTSTRAP_DIR=${BASE_DEBOOTSTRAP_DIR}-${NAME}-encryptedfs
       . $DIR/conf/luks/main.sh
     fi
   done
@@ -171,8 +171,8 @@ if [ $BOARDS != 'none' ]; then
     DEBOOTSTRAP_DIR=${BASE_DEBOOTSTRAP_DIR}-${NAME}
     . $DIR/conf/images/main.sh
     if [ $ENCRYPT ]; then
-      ENCRYPTED="-encrypted"
-      DEBOOTSTRAP_DIR=${BASE_DEBOOTSTRAP_DIR}-${NAME}-encrypted
+      ENCRYPTED="_encryptedfs"
+      DEBOOTSTRAP_DIR=${BASE_DEBOOTSTRAP_DIR}-${NAME}-encryptedfs
       . $DIR/conf/images/main.sh
       unset ENCRYPTED
     fi

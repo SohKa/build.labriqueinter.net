@@ -37,7 +37,7 @@ Build the images:
 
 ```shell
 sudo docker run -d --name build-labriqueinternet-aptcacher -v /tmp/build-labriqueinternet/:/srv/build-labriqueinternet/ debian:armhf apt-cacher-ng ForeGround=1 CacheDir=/srv/build-labriqueinternet/aptcacher/
-time sudo docker run --privileged -i -t -h build.labriqueinter.net --name build-labriqueinternet-main --link build-labriqueinternet-aptcacher:aptcacher -v /tmp/build-labriqueinternet/:/srv/build-labriqueinternet/ debian:armhf bash /srv/build-labriqueinternet/src/build.sh -cyep aptcacher -b lime1,lime2
+time sudo docker run --privileged -i -t -h build.labriqueinter.net --name build-labriqueinternet-main --link build-labriqueinternet-aptcacher:aptcacher -v /tmp/build-labriqueinternet/:/srv/build-labriqueinternet/ debian:armhf bash /srv/build-labriqueinternet/src/build.sh -cyep aptcacher -b a20lime,a20lime2
 ```
 
 After something like 30 minutes, the four images produced are available in */tmp/build-labriqueinternet/build/*.
@@ -70,7 +70,7 @@ bash init.sh
 On your building Cube, just do (you should execute this line in a *screen*/*tmux*):
 
 ```shell
-time bash /srv/build-labriqueinternet/src/build.sh -yeb lime1,lime2
+time bash /srv/build-labriqueinternet/src/build.sh -yeb a20lime,a20lime2
 ```
 
 After something like 30 minutes, the four images produced are available in */srv/build-labriqueinternet/build/*.
