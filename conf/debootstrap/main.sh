@@ -24,4 +24,8 @@ fi
 
 echo '/dev/mmcblk0p1 / ext4 rw,relatime 0 0' > $DEBOOTSTRAP_DIR/etc/mtab
 
-
+# Generate locales
+chroot_deb $DEBOOTSTRAP_DIR "$APT locales"
+sed -i "s/^# fr_FR.UTF-8 UTF-8/fr_FR.UTF-8 UTF-8/" $DEBOOTSTRAP_DIR/etc/locale.gen
+sed -i "s/^# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/" $DEBOOTSTRAP_DIR/etc/locale.gen
+chroot_deb $DEBOOTSTRAP_DIR "locale-gen en_US.UTF-8"

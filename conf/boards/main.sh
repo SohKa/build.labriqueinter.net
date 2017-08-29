@@ -1,6 +1,6 @@
 #!/bin/bash
 
-chroot_deb $DEBOOTSTRAP_DIR "$APT linux-image-armmp u-boot-tools ca-certificates openssh-server ntp parted locales vim-nox bash-completion rng-tools"
+chroot_deb $DEBOOTSTRAP_DIR "$APT linux-image-armmp u-boot-tools ca-certificates openssh-server ntp parted vim-nox bash-completion rng-tools"
 
 echo 'HRNGDEVICE=/dev/urandom' >> $DEBOOTSTRAP_DIR/etc/default/rng-tools
 echo '. /etc/bash_completion' >> $DEBOOTSTRAP_DIR/root/.bashrc
@@ -20,11 +20,6 @@ if [ -f "$DEBOOTSTRAP_DIR/etc/default/tmpfs" ]; then
   sed -e 's/#SHM_SIZE=/SHM_SIZE=128M/g' -i $DEBOOTSTRAP_DIR/etc/default/tmpfs
   sed -e 's/#TMP_SIZE=/TMP_SIZE=1G/g' -i $DEBOOTSTRAP_DIR/etc/default/tmpfs
 fi
-
-# Generate locales
-sed -i "s/^# fr_FR.UTF-8 UTF-8/fr_FR.UTF-8 UTF-8/" $DEBOOTSTRAP_DIR/etc/locale.gen
-sed -i "s/^# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/" $DEBOOTSTRAP_DIR/etc/locale.gen
-chroot_deb $DEBOOTSTRAP_DIR "locale-gen en_US.UTF-8"
 
 # Update timezone
 echo 'Europe/Paris' > $DEBOOTSTRAP_DIR/etc/timezone
