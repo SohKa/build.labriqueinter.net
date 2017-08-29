@@ -15,7 +15,7 @@ cat <<EOF
 
 # OPTIONS
 
-  -b            olinux board (see config_board.sh)      (default: a20lime)
+  -b            coma-separated list of olinux boards    (default: all)
   -a            add packages to deboostrap
   -n            hostname                                (default: olinux)
   -t            target directory for debootstrap        (default: ./tmp/debootstrap)
