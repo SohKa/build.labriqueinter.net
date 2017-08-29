@@ -146,7 +146,7 @@ if [ $BOARDS != 'none' ]; then
 
   # Configure each boards
   for i in "${BOARD_LIST[@]}"; do
-    . ${i}config.sh
+    . ${i}/config.sh
     rm -rf ${BASE_DEBOOTSTRAP_DIR}-${NAME}
     cp -ra $BASE_DEBOOTSTRAP_DIR ${BASE_DEBOOTSTRAP_DIR}-${NAME}
     DEBOOTSTRAP_DIR=${BASE_DEBOOTSTRAP_DIR}-${NAME}
