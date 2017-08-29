@@ -27,10 +27,8 @@ On your own laptop (with [Docker available](https://docs.docker.com/engine/insta
 
 ```shell
 sudo apt install git docker-ce
-mkdir -p /tmp/build-labriqueinternet/{git,aptcacher,build}/
-git clone https://github.com/labriqueinternet/build.labriqueinter.net.git /tmp/build-labriqueinternet/git/
-
-sudo docker build -t debian:armhf -f /tmp/build-labriqueinternet/git/Dockerfile /tmp/build-labriqueinternet/git/
+git clone https://github.com/labriqueinternet/build.labriqueinter.net.git /tmp/build-labriqueinternet/src/
+sudo docker build -t debian:armhf -f /tmp/build-labriqueinternet/src/Dockerfile /tmp/build-labriqueinternet/src/
 ```
 
 ### Images Building
@@ -38,8 +36,8 @@ sudo docker build -t debian:armhf -f /tmp/build-labriqueinternet/git/Dockerfile 
 Build the images:
 
 ```shell
-sudo docker run -d --name build-labriqueinternet-aptcacher -v /tmp/build-labriqueinternet/:/tmp/ debian:armhf apt-cacher-ng ForeGround=1 CacheDir=/tmp/aptcacher/
-time sudo docker run --privileged -i -t -h build.labriqueinter.net --name build-labriqueinternet-main --link build-labriqueinternet-aptcacher:aptcacher -v /tmp/build-labriqueinternet/git/:/srv/ -v /tmp/build-labriqueinternet/build/:/srv/build/ debian:armhf bash /srv/build.sh -c -y -p aptcacher -e -b lime,lime2
+sudo docker run -d --name build-labriqueinternet-aptcacher -v /tmp/build-labriqueinternet/:/srv/build-labriqueinternet/ debian:armhf apt-cacher-ng ForeGround=1 CacheDir=/srv/build-labriqueinternet/aptcacher/
+time sudo docker run --privileged -i -t -h build.labriqueinter.net --name build-labriqueinternet-main --link build-labriqueinternet-aptcacher:aptcacher -v /tmp/build-labriqueinternet/:/srv/build-labriqueinternet/ debian:armhf bash /srv/build-labriqueinternet/build.sh -cyep aptcacher -b lime1,lime2
 ```
 
 After something like 30 minutes, the four images produced are available in */tmp/build-labriqueinternet/build/*.
@@ -63,8 +61,8 @@ Prepare your building Cube:
 
 ```shell
 apt install git -y --force-yes
-git clone https://github.com/labriqueinternet/build.labriqueinter.net.git /opt/build.labriqueinter.net
-cd /opt/build.labriqueinter.net && time bash init.sh
+git clone https://github.com/labriqueinternet/build.labriqueinter.net.git /srv/build-labriqueinternet/src/
+bash init.sh
 ```
 
 ### Images Building
@@ -72,10 +70,10 @@ cd /opt/build.labriqueinter.net && time bash init.sh
 On your building Cube, just do (you should execute this line in a *screen*/*tmux*):
 
 ```shell
-cd /opt/build.labriqueinter.net && bash build.sh -e -b lime,lime2
+bash /srv/build-labriqueinternet/build.sh -yeb lime1,lime2
 ```
 
-After something like 30 minutes, the four images produced are available in */srv/build/*.
+After something like 30 minutes, the four images produced are available in */srv/build-labriqueinternet/build/*.
 
 ## Installing the New Images
 

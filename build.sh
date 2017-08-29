@@ -31,8 +31,8 @@ exit 1
 }
 
 DEBIAN_RELEASE=jessie
-DIR=/srv
-BUILD_DIR=$DIR/build
+DIR=/srv/build-labriqueinternet/src
+BUILD_DIR=/srv/build-labriqueinternet/build
 DEBOOTSTRAP_DIR=$BUILD_DIR/debootstrap
 DEB_HOSTNAME=olinux
 REP=$(dirname $0)
@@ -107,6 +107,8 @@ finish(){
   umount_dir $DEBOOTSTRAP_DIR
 }
 trap finish EXIT
+
+mkdir -p $DIR $BUILD_DIR
 
 if [ "${INSTALL_YUNOHOST_DIST}" != stable ]; then
   INSTALL_YUNOHOST_TESTING="-testing"
