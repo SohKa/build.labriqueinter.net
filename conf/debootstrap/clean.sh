@@ -2,7 +2,7 @@
 
 # Remove useless files
 chroot_deb $DEBOOTSTRAP_DIR 'apt-get clean'
-mv $DEBOOTSTRAP_DIR/etc/resolv.conf.old $DEBOOTSTRAP_DIR/etc/resolv.conf
+mv $DEBOOTSTRAP_DIR/etc/resolv.conf.old $DEBOOTSTRAP_DIR/etc/resolv.conf || true
 rm -f $DEBOOTSTRAP_DIR/etc/mtab
 
 if [ ${CROSS} ] ; then
