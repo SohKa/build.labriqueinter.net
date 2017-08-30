@@ -677,6 +677,8 @@ else
   info "Extracting settings for YunoHost"
   extract_settings yunohost
 
+  echo "${settings[yunohost,domain]}" > "${log_filepath}/domain"
+
   info "Updating Debian root password"
   deb_changepassword
 
