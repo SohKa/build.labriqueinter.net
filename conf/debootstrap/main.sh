@@ -46,7 +46,7 @@ echo \"All runlevel operations denied by policy\" >&2
 exit 101
 EOF"
   chroot_deb $DEBOOTSTRAP_DIR "chmod +x /usr/sbin/policy-rc.d"
-  chroot_deb $DEBOOTSTRAP_DIR "mv /sbin/start-stop-daemon /sbin/start-stop-daemon.REAL"
+  chroot_deb $DEBOOTSTRAP_DIR "mv /sbin/start-stop-daemon{,.REAL}"
   chroot_deb $DEBOOTSTRAP_DIR "cat > /sbin/start-stop-daemon << EOF
 #!/bin/sh
 echo \"Warning: Fake start-stop-daemon called, doing nothing\"
