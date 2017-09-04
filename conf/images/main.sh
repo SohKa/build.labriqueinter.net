@@ -3,7 +3,6 @@
 TARGET=$BUILD_DIR/labriqueinternet_${NAME^^}${ENCRYPTED}_$(date '+%Y-%m-%d')_${DEBIAN_RELEASE}${INSTALL_YUNOHOST_TESTING}.img
 MNT1=$BUILD_DIR/dest
 MNT2=$BUILD_DIR/source
-IMGSIZE=1500
 DEVICE=img
 
 mkdir -p $MNT1
@@ -12,16 +11,15 @@ mkdir -p $MNT2
 echo "[INFO] Create image."
 rm -f ${TARGET}
 # create image file
-dd if=/dev/zero of=${TARGET} bs=1MB count=$IMGSIZE status=noxfer
+dd if=/dev/zero of=${TARGET} bs=1MB count=1500 status=noxfer
 
 # find first avaliable free device
 DEVICE=$(losetup -f)
-IMGSIZE="100%"
 
 # mount image as block device
 losetup $DEVICE ${TARGET}
 
-finish() {
+finish(){
   echo "[INFO] Umount"
   losetup -d $DEVICE
 }
@@ -31,15 +29,15 @@ sync
 
 echo "[INFO] Partitioning"
 parted --script $DEVICE mklabel msdos
-parted --script $DEVICE mkpart primary ext4 2048s ${IMGSIZE}
+parted --script $DEVICE mkpart primary ext4 2048s 100% 
 parted --script $DEVICE align-check optimal 1
 
 # I know UUUgly hack...
-sleep 20
+sleep 10
+sleep 10
 partprobe $DEVICE 
 
 DEVICEP1=${DEVICE}p1
-DEVICEP2=${DEVICE}p2
 
 echo "[INFO] Formating"
 # create filesystem
@@ -52,7 +50,7 @@ fi
 # tune filesystem
 tune2fs -o journal_data_writeback $DEVICEP1
 
-finish() {
+finish(){
   echo "[INFO] Umount"
   umount $MNT1
   losetup -d $DEVICE
@@ -72,7 +70,10 @@ sync
 
 umount $MNT1
 
+finish(){
+  exit 0
+}
+
 echo "[INFO] zerofree"
 zerofree $DEVICEP1  
 losetup -d $DEVICE
-
