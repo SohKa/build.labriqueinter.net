@@ -33,6 +33,7 @@ exit 1
 DEBIAN_RELEASE=jessie
 DIR=/srv/build-labriqueinternet/src
 BUILD_DIR=/srv/build-labriqueinternet/build
+LOG_FILE=$BUILD_DIR/build-$(date '+%Y-%m-%d_%H:%M:%S').log
 DEBOOTSTRAP_DIR=$BUILD_DIR/debootstrap
 DEB_HOSTNAME=olinux
 REP=$(dirname $0)
@@ -41,6 +42,8 @@ INSTALL_YUNOHOST_DIST='stable'
 BOARDS="all"
 FORCE_DEBOOTSTRAP=no
 INSTALL_LABRIQUEINTERNET=no
+
+exec &> >(tee -a "$LOG_FILE")
 
 while getopts ":a:b:n:t:d:r:ycp:e" opt; do
   case $opt in
@@ -193,5 +196,10 @@ if [ $BOARDS != 'none' ]; then
   done
 
 fi
+
+finish(){
+  echo 'Bye :)'
+  exit 0
+}
 
 exit 0
