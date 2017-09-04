@@ -6,9 +6,12 @@ if [ ${CROSS} ] ; then
   chroot_deb $DEBOOTSTRAP_DIR "debconf-set-selections << EOF
 mysql-server-5.5 mysql-server/root_password password yunohost
 mysql-server-5.5 mysql-server/root_password_again password yunohost
+mariadb-server-10.0 mysql-server/root_password password yunohost
+mariadb-server-10.0 mysql-server/root_password_again password yunohost
 EOF"
 
   chroot_deb $DEBOOTSTRAP_DIR "$APT mysql-server"
+  chroot_deb $DEBOOTSTRAP_DIR "$APT mariadb-server"
 fi
 
 chroot_deb $DEBOOTSTRAP_DIR "$APT git"
