@@ -36,11 +36,11 @@ BUILD_DIR=/srv/build-labriqueinternet/build
 DEBOOTSTRAP_DIR=$BUILD_DIR/debootstrap
 DEB_HOSTNAME=olinux
 REP=$(dirname $0)
-APT='DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes'
+APT='RUNLEVEL=1 DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes'
 INSTALL_YUNOHOST_DIST='stable'
 BOARDS="all"
 FORCE_DEBOOTSTRAP=no
-INSTALL_YUNOHOST=yes
+INSTALL_YUNOHOST=no
 
 while getopts ":a:b:n:t:d:r:ycp:e" opt; do
   case $opt in
@@ -114,13 +114,21 @@ if [ "${INSTALL_YUNOHOST_DIST}" != stable ]; then
   INSTALL_YUNOHOST_TESTING="-${INSTALL_YUNOHOST_DIST}"
 fi
 
+if [ $FORCE_DEBOOTSTRAP == 'yes' ]; then
+  rm -rf $DEBOOTSTRAP_DIR-save
+
+fi
+
 # deboostrap
-if [ ! -d $DEBOOTSTRAP_DIR ] || [ $FORCE_DEBOOTSTRAP == 'yes' ]; then
+if [ -d $DEBOOTSTRAP_DIR-save ]; then
+  rm -rf $DEBOOTSTRAP_DIR
+  cp -r $DEBOOTSTRAP_DIR-save $DEBOOTSTRAP_DIR
+  . $DIR/conf/debootstrap/arm.sh
+else
   rm -rf $DEBOOTSTRAP_DIR && mkdir -p $DEBOOTSTRAP_DIR
   . $DIR/conf/debootstrap/main.sh
   . $DIR/conf/debootstrap/apt.sh
-else
-  . $DIR/conf/debootstrap/arm.sh
+  cp -r $DEBOOTSTRAP_DIR $DEBOOTSTRAP_DIR-save
 fi
 
 mount_dir $DEBOOTSTRAP_DIR
@@ -142,6 +150,10 @@ fi
 
 umount_dir $DEBOOTSTRAP_DIR
 
+finish(){
+  exit 0
+}
+
 if [ $BOARDS != 'none' ]; then
 
   # Configure each boards
@@ -161,8 +173,10 @@ if [ $BOARDS != 'none' ]; then
 
   # Clean debootstrap directories
   for i in $BUILD_DIR/debootstrap*/ ; do
-    DEBOOTSTRAP_DIR=$i/
-    . $DIR/conf/debootstrap/clean.sh
+    if [[ ! $i =~ save ]]; then
+      DEBOOTSTRAP_DIR=$i/
+      . $DIR/conf/debootstrap/clean.sh
+    fi
   done 
 
   # Create img
@@ -179,9 +193,5 @@ if [ $BOARDS != 'none' ]; then
   done
 
 fi
-
-finish(){
-  exit 0
-}
 
 exit 0
