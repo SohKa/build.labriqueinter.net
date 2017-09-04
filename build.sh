@@ -40,7 +40,7 @@ APT='RUNLEVEL=1 DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes'
 INSTALL_YUNOHOST_DIST='stable'
 BOARDS="all"
 FORCE_DEBOOTSTRAP=no
-INSTALL_YUNOHOST=no
+INSTALL_LABRIQUEINTERNET=no
 
 while getopts ":a:b:n:t:d:r:ycp:e" opt; do
   case $opt in
@@ -57,7 +57,7 @@ while getopts ":a:b:n:t:d:r:ycp:e" opt; do
       DEBOOTSTRAP_DIR=$OPTARG
       ;;
     y)
-      INSTALL_YUNOHOST=yes
+      INSTALL_LABRIQUEINTERNET=yes
       ;;
     d)
       INSTALL_YUNOHOST_DIST=$OPTARG
@@ -133,8 +133,9 @@ fi
 
 mount_dir $DEBOOTSTRAP_DIR
 
-if [ ! -d "$DEBOOTSTRAP_DIR/etc/yunohost" ] && [ $INSTALL_YUNOHOST == 'yes' ]; then
-  . $DIR/conf/yunohost/main.sh
+if [ ! -d "$DEBOOTSTRAP_DIR/etc/yunohost" ] && [ $INSTALL_LABRIQUEINTERNET == 'yes' ]; then
+  . $DIR/conf/labriqueinternet/yunohost.sh
+  . $DIR/conf/labriqueinternet/main.sh
 fi
 
 BASE_DEBOOTSTRAP_DIR=${DEBOOTSTRAP_DIR}
@@ -146,7 +147,6 @@ else
 fi
 
 . $DIR/conf/boards/main.sh
-. $DIR/conf/labriqueinternet/main.sh
 
 umount_dir $DEBOOTSTRAP_DIR
 

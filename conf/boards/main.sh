@@ -49,3 +49,9 @@ chroot_deb $DEBOOTSTRAP_DIR 'chmod g+s /var/mail/'
 chroot_deb $DEBOOTSTRAP_DIR '(echo olinux;echo olinux;) | passwd root'
 chroot_deb $DEBOOTSTRAP_DIR 'chage -d 0 root'
 
+# Add firstrun and secondrun init script
+install -m 755 -o root -g root $DIR/conf/boards/scripts/firstrun $DEBOOTSTRAP_DIR/usr/local/bin/
+install -m 755 -o root -g root $DIR/conf/boards/scripts/secondrun $DEBOOTSTRAP_DIR/usr/local/bin/
+install -m 444 -o root -g root $DIR/conf/boards/scripts/firstrun.service $DEBOOTSTRAP_DIR/etc/systemd/system/
+install -m 444 -o root -g root $DIR/conf/boards/scripts/secondrun.service $DEBOOTSTRAP_DIR/etc/systemd/system/
+chroot_deb $DEBOOTSTRAP_DIR "/bin/systemctl enable firstrun >> /dev/null"
