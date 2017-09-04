@@ -45,14 +45,6 @@ chroot_deb $DEBOOTSTRAP_DIR 'chgrp mail /var/mail/'
 chroot_deb $DEBOOTSTRAP_DIR 'chmod g+w /var/mail/'
 chroot_deb $DEBOOTSTRAP_DIR 'chmod g+s /var/mail/'
 
-# Jessie Stuff TOREMOVE
-#chroot_deb $DEBOOTSTRAP_DIR "wget -P /tmp/ https://repo.labriqueinter.net/u-boot/u-boot-sunxi_latest_armhf.deb"
-#chroot_deb $DEBOOTSTRAP_DIR "dpkg -i /tmp/u-boot-sunxi_latest_armhf.deb"
-
-# Set hostname
-echo $DEB_HOSTNAME > $DEBOOTSTRAP_DIR/etc/hostname
-sed -i "1i127.0.1.1\t${DEB_HOSTNAME}" $DEBOOTSTRAP_DIR/etc/hosts
-
 # Add 'olinux' for root password and force to change it at first login
 chroot_deb $DEBOOTSTRAP_DIR '(echo olinux;echo olinux;) | passwd root'
 chroot_deb $DEBOOTSTRAP_DIR 'chage -d 0 root'

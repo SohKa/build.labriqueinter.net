@@ -8,6 +8,10 @@ chroot_deb $DEBOOTSTRAP_DIR "$APT flash-kernel u-boot u-boot-tools"
 echo $FLASH_KERNEL > $DEBOOTSTRAP_DIR/etc/flash-kernel/machine
 chroot_deb $DEBOOTSTRAP_DIR "update-initramfs -k all -u"
 
+# https://dev.yunohost.org/issues/404
+chroot_deb $DEBOOTSTRAP_DIR "wget -P /tmp/ https://repo.labriqueinter.net/u-boot/u-boot-sunxi_latest_armhf.deb"
+chroot_deb $DEBOOTSTRAP_DIR "dpkg -i /tmp/u-boot-sunxi_latest_armhf.deb"
+
 # Use dhcp on boot
 cat <<EOT > $DEBOOTSTRAP_DIR/etc/network/interfaces
 auto lo
