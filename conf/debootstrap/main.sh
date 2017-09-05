@@ -13,7 +13,6 @@ if [ ${CROSS} ] ; then
     debootstrap --arch=armhf --foreign $DEBIAN_RELEASE $DEBOOTSTRAP_DIR
   fi
   cp /usr/bin/qemu-arm-static $DEBOOTSTRAP_DIR/usr/bin/
-  mv $DEBOOTSTRAP_DIR/etc/resolv.conf $DEBOOTSTRAP_DIR/etc/resolv.conf.old
   cp /etc/resolv.conf $DEBOOTSTRAP_DIR/etc
   chroot_deb $DEBOOTSTRAP_DIR '/debootstrap/debootstrap --second-stage'
 elif [ ${APTCACHER} ] ; then

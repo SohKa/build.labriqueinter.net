@@ -2,7 +2,7 @@
 
 # Remove useless files
 chroot_deb $DEBOOTSTRAP_DIR 'apt-get clean'
-mv $DEBOOTSTRAP_DIR/etc/resolv.conf.old $DEBOOTSTRAP_DIR/etc/resolv.conf || true
+rm -f $DEBOOTSTRAP_DIR/etc/resolv.conf
 rm -f $DEBOOTSTRAP_DIR/etc/mtab
 
 chroot_deb $DEBOOTSTRAP_DIR "mv /sbin/start-stop-daemon{.REAL,}"
