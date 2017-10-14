@@ -12,6 +12,7 @@ EOF"
 
   chroot_deb $DEBOOTSTRAP_DIR "$APT mysql-server"
   chroot_deb $DEBOOTSTRAP_DIR "$APT mariadb-server"
+  chroot_deb $DEBOOTSTRAP_DIR "dpkg --list |grep \"^rc\" | cut -d \" \" -f 3 | xargs dpkg --purge"
 fi
 
 chroot_deb $DEBOOTSTRAP_DIR "$APT git"
