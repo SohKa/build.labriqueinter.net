@@ -48,6 +48,7 @@ chroot_deb $DEBOOTSTRAP_DIR 'chmod g+s /var/mail/'
 # Add 'olinux' for root password and force to change it at first login
 chroot_deb $DEBOOTSTRAP_DIR '(echo olinux;echo olinux;) | passwd root'
 chroot_deb $DEBOOTSTRAP_DIR 'chage -d 0 root'
+chroot_deb $DEBOOTSTRAP_DIR "sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config"
 
 # Add firstrun and secondrun init script
 install -m 755 -o root -g root $DIR/conf/boards/scripts/firstrun $DEBOOTSTRAP_DIR/usr/local/bin/
