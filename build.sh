@@ -118,20 +118,20 @@ if [ "${INSTALL_YUNOHOST_DIST}" != stable ]; then
 fi
 
 if [ $FORCE_DEBOOTSTRAP == 'yes' ]; then
-  rm -rf $DEBOOTSTRAP_DIR-save
+  rm -rf $DEBOOTSTRAP_DIR-DEBIAN_RELEASE
 
 fi
 
 # deboostrap
-if [ -d $DEBOOTSTRAP_DIR-save ]; then
+if [ -d $DEBOOTSTRAP_DIR-DEBIAN_RELEASE ]; then
   rm -rf $DEBOOTSTRAP_DIR
-  cp -r $DEBOOTSTRAP_DIR-save $DEBOOTSTRAP_DIR
+  cp -r $DEBOOTSTRAP_DIR-DEBIAN_RELEASE $DEBOOTSTRAP_DIR
   . $DIR/conf/debootstrap/arm.sh
 else
   rm -rf $DEBOOTSTRAP_DIR && mkdir -p $DEBOOTSTRAP_DIR
   . $DIR/conf/debootstrap/main.sh
   . $DIR/conf/debootstrap/apt.sh
-  cp -r $DEBOOTSTRAP_DIR $DEBOOTSTRAP_DIR-save
+  cp -r $DEBOOTSTRAP_DIR $DEBOOTSTRAP_DIR-DEBIAN_RELEASE
 fi
 
 mount_dir $DEBOOTSTRAP_DIR
